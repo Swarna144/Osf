@@ -1,0 +1,49 @@
+#include <windows.h>
+#include <Xinput.h>
+#include <stdio.h>
+
+// Link with Xinput library
+#pragma comment(lib, "Xinput9_1_0.lib")
+
+void printControllerState(XINPUT_STATE state) {
+    printf("Left Thumbstick: X=%d, Y=%d\n", state.Gamepad.sThumbLX, state.Gamepad.sThumbLY);
+    printf("Right Thumbstick: X=%d, Y=%d\n", state.Gamepad.sThumbRX, state.Gamepad.sThumbRY);
+    printf("Left Trigger: %d, Right Trigger: %d\n", state.Gamepad.bLeftTrigger, state.Gamepad.bRightTrigger);
+
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) printf("A button pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_B) printf("B button pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_X) printf("X button pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_Y) printf("Y button pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_START) printf("Start button pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) printf("Back button pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) printf("D-Pad Up pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) printf("D-Pad Down pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) printf("D-Pad Left pressed\n");
+    if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) printf("D-Pad Right pressed\n");
+}
+
+int main() {
+    XINPUT_STATE state;
+    DWORD result;
+
+    printf("Press CTRL+C to exit.\n");
+
+    while (1) {
+        ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+        result = XInputGetState(0, &state); // Controller 0
+
+        if (result == ERROR_SUCCESS) {
+            system("cls"); // Clear console
+            printf("Controller connected!\n");
+            printControllerState(state);
+        } else {
+            system("cls");
+            printf("Controller not connected.\n");
+        }
+
+        Sleep(200); // Poll every 200ms
+    }
+
+    return 0;
+}
